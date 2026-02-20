@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
-from property_ai.src.predict import predict_price
+from src.predict import predict_price
 
 app=FastAPI(title="Property Price Intelligence API")
 
