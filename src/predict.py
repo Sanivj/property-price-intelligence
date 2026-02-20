@@ -24,7 +24,7 @@ model=joblib.load("models/price_model.pkl")
 with open("artifacts/columns.json") as f:
   columns=json.load(f)
 
-explainer=shap.TreeExplainer(model)
+explainer=None
 
 def prepare_input(data_dict):
   x=np.zeros(len(columns))
@@ -41,6 +41,10 @@ def predict_price(data_dict):
   tree_preds=np.array([t.predict(sample)[0] for t in model.estimators_])
   low=np.percentile(tree_preds,10)
   high=np.percentile(tree_preds,90)
+
+  global explainer
+  if explainer is None:
+    explainer=shap.TreeExplainer(model)
 
   shap_values=explainer.shap_values(sample)[0]
   top_idx=np.argsort(np.abs(shap_values))[-5:][::-1]
