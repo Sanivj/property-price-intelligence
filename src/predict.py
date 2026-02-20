@@ -2,10 +2,26 @@ import joblib
 import json
 import numpy as np
 import shap
+import os
+import requests
 
-model=joblib.load("property_ai/models/price_model.pkl")
+MODEL_URL="https://huggingface.co/Sanivj1881/property-price-model/blob/main/price_model.pkl"
+COLS_URL="https://huggingface.co/Sanivj1881/property-price-model/blob/main/columns.json"
 
-with open("property_ai/artifacts/columns.json") as f:
+os.makedirs("models",exist_ok=True)
+os.makedirs("artifacts",exist_ok=True)
+
+def download(url,path):
+    if not os.path.exists(path):
+        r=requests.get(url)
+        open(path,"wb").write(r.content)
+
+download(MODEL_URL,"models/price_model.pkl")
+download(COLS_URL,"artifacts/columns.json")
+
+model=joblib.load("models/price_model.pkl")
+
+with open("artifacts/columns.json") as f:
   columns=json.load(f)
 
 explainer=shap.TreeExplainer(model)
